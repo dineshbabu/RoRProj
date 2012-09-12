@@ -1,0 +1,98 @@
+
+<script>
+  	
+	  
+  function toggleLogField(){
+  	alert('1');
+  }
+  </script>
+<h1>CM Deployment Service</h1><br>
+<%= form_for(@depConf , :url => { :action => "update_deployment" }) do |f| %>
+  <% if @depConf.errors.any? %>
+    <div id="error_explanation">
+      <h2>Please correct the following <%= pluralize(@depConf.errors.count, "error") %>:</h2>
+
+      <ul>
+      <% @depConf.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+   	<table width="550" border="0" style="background-color:" height="100%">
+	    <tr height="100%">
+	        <td height="100%">
+	        	<table width="375" height="100%">
+					<tr>
+						<td width="250"><%= f.label :database %></td>
+						<td>:</td>
+						<td><%= f.text_field :database %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :host %></td>
+						<td>:</td>
+						<td><%= f.text_field :host %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :User %></td>
+						<td>:</td>
+						<td><%= f.text_field :dmuser %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :number_of_threads %></td>
+						<td>:</td>
+						<td><%= f.text_field :thread_pool_size %></td>
+					</tr>
+					<tr>
+						<td><%= f.label "Idle timeout(seconds)" %></td>
+						<td>:</td>
+						<td><%= f.text_field :idle_timeout %></td>
+					</tr>
+					<tr>
+						<td height="100%" colspan="3">
+				        	<%= field_set_tag "Logging" do %>
+								<table>
+									<tr>
+										<td colspan="3"><%= f.check_box :enable_logging%>&nbsp;Enable logging </td>
+									</tr>
+									<tr>
+										<td><%= f.label :location %></td>
+										<td>:</td>
+										<td><%= f.text_field :log_dir %></td>								
+									</tr>
+								</table>
+							<% end %>							
+				        </td>						
+					</tr>
+					<tr height="100%">
+				        <td height="100%" colspan="3">
+				        	<%= field_set_tag "Status" do %>
+							<table>
+								<tr><td ><img id="statusimage" src="/assets/amber.png"></img></td><td ><p id="statustext">Unknown</p></td></tr>
+								<tr><td colspan="2">&nbsp;</td></tr>
+								<tr>
+									<td><%= button_tag "Start Listener", :type => 'button' %></td>
+									<td><%= button_tag "Stop Listener", :type => 'button' %></td>
+								</tr>
+							</table>
+							<% end %>							
+				        </td>
+	    			</tr>
+					<tr>
+						<td colspan="3"><%= f.submit "Test"%><%= f.submit "Save"%></td>
+					</tr>					
+				</table>
+	        </td>
+	        <!--<td height="100%">
+	        	<table width="350" border="0" height="100%">
+				    <tr height="100%">
+				        <td height="100%">
+				        	<div  height="100%"><p id="help" class="help"></p></div>
+				        </td>
+				    </tr>
+				</table>
+	        </td>-->
+	    </tr>
+    </table>	
+  <% end %>

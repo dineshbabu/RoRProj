@@ -1,0 +1,137 @@
+
+<script>
+  	
+	
+  var service = " service:<br>Specifies the port to listen to for client connections. You may, therefore, run more than one pool manage using different ports.";
+  var user = "user: <br> Specifies the operating system account name that will own every application process in the pool. For the Serena-Supplied Runtime RDBMS or Oracle Enterprise, this can be any arbitrary valid operating system account; whereas, for Microsoft SQL Server Enterprise, it must be the operating system account of the database owner. NOTE See the -restricted parameter concerning area/remote node authentication credentials with respect to running a server or agent in restricted mode.";
+  var dsn = "dsn: <br> Specifies the Dimensions CM base database name and the ODBC data source name (DSN) to use when starting up the initial applications servers at the time of pool manager startup."
+  var min = "min: <br> Minimum number of application servers that the pool will shrink to.";
+  var max = "max: <br> Maximum number of application servers that the pool will expand to."
+  var initial = "initial: <br> Initial number of application servers that will be created in the pool at startup time. These will use the database connection parameter -dsn for identifying the base database to connect to.";
+  var free = "free: <br> The maximum number of application servers that may be left idle. Once this limit is reached, the pool will start shrinking as necessary by destroying idle application servers.";
+  var idle_timeout = "idle_timeout: <br> Minimum: none, but 60 is recommended The amount of time, in seconds, that a client can be idle before it is disconnected."; 
+  var session_timeout = "session_timeout: <br> Minimum 3600 (1 hour). The amount of time, in seconds, that a client's session state is maintained by the pool manager before being discarded. The application server and the Dimensions CM license token are then returned to the pool. NOTE This value overrides the session-timeout parameter used in web-inf\web.xml files.";
+  
+  function displayHelp(document, field) {
+  	
+	var help="";
+	switch(field) {
+	case "service":
+		help =  service;
+		break;
+	case "user":
+		help = user;
+		break;
+	case "dsn":
+		help = dsn;
+		break;
+	case "min":
+		help = min;
+		break;
+	case "max":
+		help = max;
+		break;
+	case "initial":
+		help = initial;
+		break;
+	case "free":
+		help = free;
+		break;
+	case "idle_timeout":
+		help = idle_timeout;
+		break;
+	case "session_timeout":
+		help = session_timeout;
+		break;
+	}
+	 document.getElementById("help").innerHTML=help;
+  }
+  </script>
+<h1>CM Deployment Service</h1><br>
+<%= form_for(@depConf , :url => { :action => "update_deployment" }) do |f| %>
+  <% if @depConf.errors.any? %>
+    <div id="error_explanation">
+      <h2>Please correct the following <%= pluralize(@depConf.errors.count, "error") %>:</h2>
+
+      <ul>
+      <% @depConf.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+   	<table width="550" border="0" style="background-color:" height="100%">
+	    <tr height="100%">
+	        <td height="100%">
+	        	<table width="375" height="100%">
+					<tr>
+						<td width="250"><%= f.label :database %></td>
+						<td>:</td>
+						<td><%= f.text_field :database %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :host %></td>
+						<td>:</td>
+						<td><%= f.text_field :host %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :User %></td>
+						<td>:</td>
+						<td><%= f.text_field :dmuser %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :number_of_threads %></td>
+						<td>:</td>
+						<td><%= f.text_field :thread_pool_size %></td>
+					</tr>
+					<tr>
+						<td><%= f.label "Idle timeout(seconds)" %></td>
+						<td>:</td>
+						<td><%= f.text_field :idle_timeout %></td>
+					</tr>
+					<tr>
+						<td height="100%" colspan="3">
+				        	<%= field_set_tag "Logging" do %>
+								<table>
+									<tr><td colspan="3"><%= check_box_tag "enable_logging", "yes", false %> &nbsp;Enable logging</td></tr>
+									<tr>
+										<td><%= f.label :location %></td>
+										<td>:</td>
+										<td><%= f.text_field :log_dir %></td>								
+									</tr>
+								</table>
+							<% end %>							
+				        </td>						
+					</tr>
+					<tr height="100%">
+				        <td height="100%" colspan="3">
+				        	<%= field_set_tag "Status" do %>
+							<table>
+								<tr><td ><img id="statusimage" src="/assets/amber.png"></img></td><td ><p id="statustext">Unknown</p></td></tr>
+								<tr><td colspan="2">&nbsp;</td></tr>
+								<tr>
+									<td><%= button_tag "Start Listener", :type => 'button' %></td>
+									<td><%= button_tag "Stop Listener", :type => 'button' %></td>
+								</tr>
+							</table>
+							<% end %>							
+				        </td>
+	    			</tr>
+					<tr>
+						<td colspan="3"><%= f.submit "Test"%><%= f.submit "Save"%></td>
+					</tr>					
+				</table>
+	        </td>
+	        <!--<td height="100%">
+	        	<table width="350" border="0" height="100%">
+				    <tr height="100%">
+				        <td height="100%">
+				        	<div  height="100%"><p id="help" class="help"></p></div>
+				        </td>
+				    </tr>
+				</table>
+	        </td>-->
+	    </tr>
+    </table>	
+  <% end %>

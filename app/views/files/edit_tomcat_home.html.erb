@@ -1,0 +1,164 @@
+<script>
+	
+	function startTomcatListener(){
+		$.ajax({
+  				url: '/files/starttomcatlistener',
+				type: "GET",
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						message = data.substring(data.indexOf(",")+3 , data.length - 2 );
+						$("#statustext").text(message);
+    				   if(status == 'true'){					   	
+						$("#statusimage").attr('src','/assets/green.png');
+					   }else if(status == 'false'){
+					   	$("#statusimage").attr('src','/assets/red.png');
+					   }else{
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }
+  					}
+			})
+	}
+	
+	function stopTomcatListener(){
+		$.ajax({
+  				url: '/files/stoptomcatlistener',
+				type: "GET",
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						message = data.substring(data.indexOf(",")+3 , data.length - 2 );
+						$("#statustext").text(message);
+					if(status == 'true'){					   	
+						$("#statusimage").attr('src','/assets/red.png');
+					   }else if(status == 'false'){
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }else{
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }
+  					}
+			})
+	}
+    
+	function testTomcatHome(){
+		$.ajax({
+  				url: '/files/testtomcathome',
+				type: "GET",
+				data : { Home: $('#Home').val()},
+  				success: function(data) {
+                    status = data.substring(1,data.indexOf(","));
+                    <!--message = data.substring(data.indexOf(",")+3 , data.length-2);-->
+                    message = "The Serena Common Tomcat home is not valid. Please enter the correct location."
+                    $("#homeError").text('');
+                    if(status == 'false'){
+                        $("#homeError").text(message);
+                    }else if(status == 'true'){
+                    }
+                }
+			})
+	}
+    
+	function testTomcatPort(){
+		$.ajax({
+  				url: '/files/testtomcatport',
+                type: "GET",
+				data : { Port: $('#Port').val()},
+  				success: function(data) {
+                    status = data
+					message = "The Serena Common Tomcat is not available from this port. Please enter the correct location."
+					$("#portError").text('');
+					if(status == 'false'){
+						$("#portError").text(message);
+					   }else if(status == 'true'){
+					   }
+  					}
+			})
+	}
+    
+    function testTOMCAT(){
+			testTomcatHome()
+            testTomcatPort()
+			
+	}
+</script>
+
+<h1>Serena Common Tomcat Configuration Home</h1>
+<%= form_tag( "/files/dohealthcheck", :remote => true ) do  %>
+   	<table width="50%" border="0" height="100%">
+   		<tr>
+			<td colspan="2">
+				<font color="red" id="displayError">
+					<%= @error %>
+				</font>
+			</td>
+		</tr>
+	    <tr height="100%">
+	        <td height="100%" colspan="2">
+	        	<%= field_set_tag "" do %>
+				<table>
+					<tr><td>Use this section to control all aspects of your Serena Common Tomcat installation, from the port number used to Single Sign-On enablement.</td></tr>
+				</table>
+				<% end %>							
+	        </td>
+	    </tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>			
+		</tr>
+		<tr>
+			<td>
+				Home location:
+			</td>
+			<td>
+				<%=text_field_tag("Home", @sctRoot, :size => 75)%>
+			</td>
+        </tr>
+        <tr>
+			<td></td>
+			<td colspan="2">
+				<font color="red" id="homeError">
+					<%= @error %>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Port number:
+			</td>
+			<td>
+				<%=text_field_tag("Port", '8080', :size => 5)%>
+			</td>
+		</tr>
+                <tr>
+			<td></td>
+			<td colspan="2">
+				<font color="red" id="portError">
+					<%= @error %>
+				</font>
+			</td>
+		</tr>
+                
+		<tr>
+			<td colspan="2">&nbsp;</td>			
+		</tr>
+		<tr height="100%">
+	        <td height="100%" colspan="2">
+	        	<%= field_set_tag "Status" do %>
+				<table>
+					<tr><td ><img id="statusimage" src="/assets/amber.png"></img></td><td ><p id="statustext">Unknown</p></td></tr>
+					<tr><td colspan="2">&nbsp;</td></tr>
+					<tr>
+						<td><%= tag "input", { "type" => "button", "value" => "Start", "onclick" => "startTomcatListener()" } %></td>
+						<td><%= tag "input", { "type" => "button", "value" => "Stop", "onclick" => "stopTomcatListener()" } %></td>
+					</tr>
+				</table>
+				<% end %>							
+	        </td>
+	    </tr>		
+		<tr>
+			<table>
+				<tr>
+					<td><%= tag "input", { "type" => "button", "value" => "Test", "onclick" => "testTOMCAT()" } %></td>
+					<td><%= button_tag "Save", :type => 'button' %></td>
+				</tr>
+			</table>
+		</tr>
+    </table>	
+  <% end %>

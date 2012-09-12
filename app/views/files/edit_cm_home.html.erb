@@ -1,0 +1,146 @@
+<script>
+	
+	function startListener(){
+		$.ajax({
+  				url: '/files/startcmlistener',
+				type: "GET",
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						message = data.substring(data.indexOf(",")+3 , data.length-2);
+						
+						$("#statustext").text(message);
+    				   if(status == 'true'){					   	
+						$("#statusimage").attr('src','/assets/green.png');
+					   }else if(status == 'false'){
+					   	$("#statusimage").attr('src','/assets/red.png');
+					   }else{
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }
+  					}
+				})
+	}
+	
+	function stopListener(){
+		$.ajax({
+  				url: '/files/stopcmlistener',
+				type: "GET",
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						message = data.substring(data.indexOf(",")+3 , data.length-2);
+						$("#statustext").text(message);
+					if(status == 'true'){					   	
+						$("#statusimage").attr('src','/assets/red.png');
+					   }else if(status == 'false'){
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }else{
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }
+  					}
+				})
+	}
+	
+	function testListener(){
+		$.ajax({
+  				url: '/files/testcmlistener',
+				type: "GET",
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						message = data.substring(data.indexOf(",")+3 , data.length-2);
+						$("#statustext").text(message);
+												
+					if(status == 'false'){					   	
+						$("#statusimage").attr('src','/assets/red.png');
+					   }else if(status == 'true'){
+					   	$("#statusimage").attr('src','/assets/green.png');
+					   }else{
+					   	$("#statusimage").attr('src','/assets/amber.png');
+					   }
+  					}
+				})
+	}
+	
+	function testCMHome(){
+		$.ajax({
+  				url: '/files/testcmhome',
+				type: "GET",
+				data : { Home: $('#Home').val()},
+  				success: function(data) {
+						status = data.substring(1,data.indexOf(","));
+						<!--message = data.substring(data.indexOf(",")+3 , data.length-2);-->
+						message = "Invalid CM Home selected. Please enter the correct location."
+						$("#displayError").text('');
+					if(status == 'false'){					   	
+						
+						$("#displayError").text(message);
+					   }else if(status == 'true'){
+					   }
+  					}
+				})
+	}
+	function testCM(){
+			testListener()
+			testCMHome()
+			
+	}
+</script>
+<body onload='testListener();'></body>
+<h1>CM Configuration Home</h1>
+<%= form_tag( "/files/dohealthcheck", :remote => true ) do  %>
+	
+   	<table width="50%" border="0" height="100%">
+   		<tr height="100%">
+	        <td height="100%" colspan="2">
+	        	<%= field_set_tag "" do %>
+				<table>
+					<tr><td>Use this section to control all aspects of your Dimensions CM installation, from the databases available to the port numbers being used by the various services.</td></tr>
+				</table>
+				<% end %>							
+	        </td>
+	    </tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>			
+		</tr>
+
+		<tr>
+			<td>
+				Home location:
+			</td>
+			<td>
+				<%=text_field_tag("Home", @cmRoot, :size => 75)%>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="2">
+				<font color="red" id="displayError">
+					<%= @error %>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>			
+		</tr>
+		<tr height="100%">
+	        <td height="100%" colspan="2">
+	        	<%= field_set_tag "Status" do %>
+				<table>
+					<tr><td ><img id="statusimage" src="/assets/amber.png"></img></td><td ><p id="statustext">Unknown</p></td></tr>
+					<tr><td colspan="2">&nbsp;</td></tr>
+					<tr>						
+						<td><%= tag "input", { "type" => "button", "value" => "Start Listener", "onclick" => "startListener()" } %></td>						
+						<td><%= tag "input", { "type" => "button", "value" => "Stop Listener", "onclick" => "stopListener()" } %></td>
+					</tr>
+				</table>
+				<% end %>							
+	        </td>
+	    </tr>		
+		<tr>
+			<table>
+				<tr>
+					<td><%= tag "input", { "type" => "button", "value" => "Test", "onclick" => "testCM()" } %></td>
+					<td><%= button_tag "Save", :type => 'button' %></td>
+				</tr>
+			</table>
+		</tr>
+    </table>
+<% end %>
